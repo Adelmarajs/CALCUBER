@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrida Fácil — Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00d47e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Corrida Fácil" />
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+</head>
+<body>
+  <div class="container">
+    <div class="login-card">
+
+      <!-- LOGO -->
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <path d="M3 8L12 3L21 8L12 13L3 8Z" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M3 16L12 21L21 16" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M3 12L12 17L21 12" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1>Corrida Fácil</h1>
+        <p class="subtitle">Calcule corridas em segundos</p>
+      </div>
+
+      <!-- === LOGIN === -->
+      <form id="loginForm" novalidate>
+        <div class="field-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" required />
+        </div>
+        <div class="field-group">
+          <label for="senha">Senha</label>
+          <div class="password-wrapper">
+            <input type="password" id="senha" placeholder="sua senha" autocomplete="current-password" required />
+            <button type="button" id="toggleLoginEye" class="toggle-senha" aria-label="Mostrar senha" tabindex="-1">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="lembrar" />
+            <span class="checkmark"></span>
+            Lembrar-me
+          </label>
+          <a href="#" class="link-esqueci">Esqueci a senha</a>
+        </div>
+        <button type="submit" class="btn-primario" id="btnEntrar">
+          <span class="btn-texto">Entrar</span>
+          <span class="btn-spinner" style="display:none;"></span>
+        </button>
+        <p class="erro-msg" id="erroMsg" role="alert"></p>
+      </form>
+
+      <!-- === REGISTRO === -->
+      <form id="registerForm" novalidate style="display:none;">
+        <div class="register-title">
+          <h2>Criar conta</h2>
+          <p>Preencha os dados para se cadastrar.</p>
+        </div>
+        <div class="field-group">
+          <label for="regNome">Nome completo</label>
+          <input type="text" id="regNome" placeholder="Seu nome completo" required />
+        </div>
+        <div class="field-group">
+          <label for="regEmail">E-mail</label>
+          <input type="email" id="regEmail" placeholder="seu@email.com" required />
+        </div>
+        <div class="field-group">
+          <label for="regSenha">Senha</label>
+          <div class="password-wrapper">
+            <input type="password" id="regSenha" placeholder="mínimo 4 caracteres" required />
+            <button type="button" id="toggleRegEye" class="toggle-senha" aria-label="Mostrar senha" tabindex="-1">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="regConfirma">Confirmar senha</label>
+          <input type="password" id="regConfirma" placeholder="repita a senha" required />
+        </div>
+        <button type="submit" class="btn-primario" id="btnRegistrar">
+          <span class="btn-texto">Criar conta</span>
+          <span class="btn-spinner" style="display:none;"></span>
+        </button>
+        <p class="erro-msg" id="regErroMsg" role="alert"></p>
+        <p class="sucesso-msg" id="regSucessoMsg" style="display:none;" role="alert"></p>
+      </form>
+
+      <!-- FOOTER -->
+      <p class="footer-link" id="loginFooter">
+        Ainda não tem conta? <a href="#" id="linkCriarConta">Criar conta</a>
+      </p>
+      <p class="footer-link" id="registerFooter" style="display:none;">
+        Já tem conta? <a href="#" id="linkFazerLogin">Fazer login</a>
+      </p>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      var app = CalcUberApp;
+
+      // === LOGIN ===
+      var loginForm     = document.getElementById('loginForm');
+      var inpEmail      = document.getElementById('email');
+      var inpSenha      = document.getElementById('senha');
+      var chkLembrar    = document.getElementById('lembrar');
+      var erroMsg       = document.getElementById('erroMsg');
+      var btnEntrar     = document.getElementById('btnEntrar');
+      var btnTextLogin  = btnEntrar.querySelector('.btn-texto');
+      var btnSpinLogin  = btnEntrar.querySelector('.btn-spinner');
+      var eyeLogin      = document.getElementById('toggleLoginEye');
+
+      // === REGISTRO ===
+      var registerForm  = document.getElementById('registerForm');
+      var inpNome       = document.getElementById('regNome');
+      var inpRegEmail   = document.getElementById('regEmail');
+      var inpRegSenha   = document.getElementById('regSenha');
+      var inpConfirma   = document.getElementById('regConfirma');
+      var regErroMsg    = document.getElementById('regErroMsg');
+      var regSucessoMsg = document.getElementById('regSucessoMsg');
+      var btnRegistrar  = document.getElementById('btnRegistrar');
+      var btnTextReg    = btnRegistrar.querySelector('.btn-texto');
+      var btnSpinReg    = btnRegistrar.querySelector('.btn-spinner');
+      var eyeReg        = document.getElementById('toggleRegEye');
+
+      var loginFooter    = document.getElementById('loginFooter');
+      var registerFooter = document.getElementById('registerFooter');
+
+      // === LEMBRAR-ME ===
+      (function () {
+        var saved = localStorage.getItem(app.CONFIG.STORAGE_EMAIL);
+        var check = localStorage.getItem(app.CONFIG.STORAGE_LEMBRAR);
+        if (saved) { inpEmail.value = saved; chkLembrar.checked = check === 'true'; }
+      })();
+
+      function salvarLembrar(email) {
+        if (chkLembrar.checked) {
+          localStorage.setItem(app.CONFIG.STORAGE_EMAIL, email);
+          localStorage.setItem(app.CONFIG.STORAGE_LEMBRAR, 'true');
+        } else {
+          localStorage.removeItem(app.CONFIG.STORAGE_EMAIL);
+          localStorage.removeItem(app.CONFIG.STORAGE_LEMBRAR);
+        }
+      }
+
+      // === TOGGLE ===
+      function limparMsgs() {
+        app.Ui.limparErro(erroMsg);
+        app.Ui.limparErro(regErroMsg);
+        regSucessoMsg.style.display = 'none';
+      }
+
+      function mostrarLogin() {
+        loginForm.style.display     = 'flex';
+        registerForm.style.display  = 'none';
+        loginFooter.style.display   = 'block';
+        registerFooter.style.display = 'none';
+        limparMsgs();
+      }
+
+      function mostrarRegistro() {
+        loginForm.style.display     = 'none';
+        registerForm.style.display  = 'flex';
+        loginFooter.style.display   = 'none';
+        registerFooter.style.display = 'block';
+        limparMsgs();
+      }
+
+      document.getElementById('linkCriarConta').addEventListener('click', function (e) {
+        e.preventDefault();
+        mostrarRegistro();
+      });
+
+      document.getElementById('linkFazerLogin').addEventListener('click', function (e) {
+        e.preventDefault();
+        mostrarLogin();
+      });
+
+      // === OLHO (mostrar/ocultar senha) ===
+      function toggleSenha(input, btn) {
+        var t = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', t);
+        btn.classList.toggle('visible');
+      }
+
+      eyeLogin.addEventListener('click', function () { toggleSenha(inpSenha, eyeLogin); });
+      eyeReg.addEventListener('click', function () { toggleSenha(inpRegSenha, eyeReg); });
+
+      // === SUBMIT LOGIN ===
+      loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        app.Ui.limparErro(erroMsg);
+        var email = inpEmail.value.trim();
+        var senha = inpSenha.value;
+        if (!email) { app.Ui.exibirErro(erroMsg, 'Informe seu e-mail.'); inpEmail.focus(); return; }
+        if (!senha) { app.Ui.exibirErro(erroMsg, 'Informe sua senha.'); inpSenha.focus(); return; }
+        app.Ui.setLoading(btnEntrar, true, { textEl: btnTextLogin, spinnerEl: btnSpinLogin });
+        app.Auth.login(email, senha, function (erro) {
+          app.Ui.setLoading(btnEntrar, false, { textEl: btnTextLogin, spinnerEl: btnSpinLogin });
+          if (erro) { app.Ui.exibirErro(erroMsg, erro.message); return; }
+          salvarLembrar(email);
+          window.location.href = app.CONFIG.DASHBOARD_URL;
+        });
+      });
+
+      inpSenha.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') loginForm.dispatchEvent(new Event('submit'));
+      });
+
+      // === SUBMIT REGISTRO ===
+      registerForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        app.Ui.limparErro(regErroMsg);
+        regSucessoMsg.style.display = 'none';
+        var nome     = inpNome.value.trim();
+        var email    = inpRegEmail.value.trim();
+        var senha    = inpRegSenha.value;
+        var confirma = inpConfirma.value;
+        if (!nome)               { app.Ui.exibirErro(regErroMsg, 'Informe seu nome.');               inpNome.focus();    return; }
+        if (!email)              { app.Ui.exibirErro(regErroMsg, 'Informe seu e-mail.');              inpRegEmail.focus(); return; }
+        if (!senha)              { app.Ui.exibirErro(regErroMsg, 'Crie uma senha.');                  inpRegSenha.focus(); return; }
+        if (senha.length < 4)    { app.Ui.exibirErro(regErroMsg, 'A senha deve ter ao menos 4 caracteres.'); inpRegSenha.focus(); return; }
+        if (senha !== confirma)  { app.Ui.exibirErro(regErroMsg, 'As senhas não conferem.');          inpConfirma.focus(); return; }
+        app.Ui.setLoading(btnRegistrar, true, { textEl: btnTextReg, spinnerEl: btnSpinReg });
+        app.Api.registrar(nome, email, senha, function (erro) {
+          app.Ui.setLoading(btnRegistrar, false, { textEl: btnTextReg, spinnerEl: btnSpinReg });
+          if (erro) { app.Ui.exibirErro(regErroMsg, erro.message); return; }
+          mostrarLogin();
+          inpEmail.value = email;
+          inpNome.value = inpRegEmail.value = inpRegSenha.value = inpConfirma.value = '';
+          app.Ui.exibirErro(erroMsg, 'Conta criada com sucesso! Faça login.');
+          erroMsg.style.color = 'var(--accent)';
+          erroMsg.style.background = 'rgba(0,212,126,0.12)';
+          erroMsg.style.borderColor = 'rgba(0,212,126,0.3)';
+        });
+      });
+
+      // === SERVICE WORKER ===
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      }
+    })();
+  </script>
+</body>
+</html>

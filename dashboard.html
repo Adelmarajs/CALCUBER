@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrida Fácil — Calcular Corrida</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00d47e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Corrida Fácil" />
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+</head>
+<body class="page-main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M3 8L12 3L21 8L12 13L3 8Z" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M3 16L12 21L21 16" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M3 12L12 17L21 12" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="brand-name">Corrida Fácil</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-user" id="topbarUser"></span>
+        <button class="btn-logout" id="btnLogout" title="Sair">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="logout-label">Sair</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="main-content">
+    <div class="hero">
+      <h2 class="hero-title">Qual o valor da corrida?</h2>
+      <p class="hero-desc">Preencha os dados e veja o preço estimado em segundos.</p>
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <div class="card-form">
+      <form id="calcForm" novalidate>
+        <div class="field-group">
+          <label><i class="fas fa-circle-dot" style="color:var(--accent);font-size:0.75em;"></i> Origem</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-location-dot input-icon"></i>
+            <input type="text" id="origem" placeholder="Endereço de partida" required />
+          </div>
+        </div>
+        <div class="field-group">
+          <label><i class="fas fa-location-dot" style="color:var(--accent);font-size:0.75em;"></i> Destino</label>
+          <div class="input-icon-wrap">
+            <i class="fas fa-flag-checkered input-icon"></i>
+            <input type="text" id="destino" placeholder="Endereço de chegada" required />
+          </div>
+        </div>
+        <div class="field-row-split">
+          <div class="field-group">
+            <label><i class="fas fa-tag" style="color:var(--accent);font-size:0.75em;"></i> Taxa Fixa (R$)</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-dollar-sign input-icon"></i>
+              <input type="number" id="taxaFixa" step="0.01" min="0" value="5.00" required />
+            </div>
+            <span class="field-hint">Sugerido: R$ 5,00</span>
+          </div>
+          <div class="field-group">
+            <label><i class="fas fa-road" style="color:var(--accent);font-size:0.75em;"></i> Preço por KM (R$)</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-dollar-sign input-icon"></i>
+              <input type="number" id="precoKm" step="0.01" min="0" value="2.50" required />
+            </div>
+            <span class="field-hint">Sugerido: R$ 2,50</span>
+          </div>
+        </div>
+        <button type="submit" class="btn-calcular" id="btnCalcular">
+          <span class="btn-calcular-text"><i class="fas fa-calculator"></i> Calcular Corrida</span>
+          <span class="btn-calcular-spinner" style="display:none;"><i class="fas fa-spinner fa-pulse"></i> Calculando…</span>
+        </button>
+        <p class="erro-msg" id="erroMsg" role="alert"></p>
+      </form>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="card-resultado" id="cardResultado" style="display:none;">
+      <div class="resultado-header">
+        <i class="fas fa-check-circle"></i> <span>Corrida calculada</span>
+      </div>
+
+      <div class="resultado-rotas">
+        <div class="rota-ponto">
+          <span class="rota-marker origem-marker"></span>
+          <span class="rota-endereco" id="resOrigem">—</span>
+        </div>
+        <div class="rota-linha"></div>
+        <div class="rota-ponto">
+          <span class="rota-marker destino-marker"></span>
+          <span class="rota-endereco" id="resDestino">—</span>
+        </div>
+      </div>
+
+      <div class="resultado-grade">
+        <div class="grade-item grade-destaque">
+          <span class="grade-label">Distância</span>
+          <span class="grade-valor" id="resDistancia">—</span>
+        </div>
+        <div class="grade-item grade-destaque">
+          <span class="grade-label">Tempo estimado</span>
+          <span class="grade-valor" id="resTempo">—</span>
+        </div>
+      </div>
+
+      <div class="resultado-detalhes">
+        <div class="detalhe-linha">
+          <span class="detalhe-label">Taxa fixa</span>
+          <span class="detalhe-valor" id="resTaxa">—</span>
+        </div>
+        <div class="detalhe-linha">
+          <span class="detalhe-label">Valor por KM</span>
+          <span class="detalhe-valor" id="resPrecoKm">—</span>
+        </div>
+        <div class="detalhe-linha detalhe-subtotal">
+          <span class="detalhe-label">Subtotal (dist. × preço/km)</span>
+          <span class="detalhe-valor" id="resSubtotal">—</span>
+        </div>
+      </div>
+
+      <div class="resultado-total">
+        <span class="total-label"><i class="fas fa-calculator"></i> Valor total da corrida</span>
+        <span class="total-valor" id="resTotal">R$ —</span>
+      </div>
+
+      <div class="resultado-mapa">
+        <div class="mapa-wrapper">
+          <iframe id="mapaIframe" class="mapa-iframe" loading="lazy" title="Mapa do trajeto"></iframe>
+        </div>
+        <p class="mapa-aviso">Mapa estático — use os botões abaixo para navegação completa.</p>
+      </div>
+
+      <div class="resultado-acoes">
+        <a class="btn-rota btn-gmaps" id="linkGmaps" href="#" target="_blank" rel="noopener">
+          <i class="fab fa-google"></i>
+          <span class="btn-rota-texto">
+            <span class="btn-rota-titulo">Abrir no Google Maps</span>
+            <span class="btn-rota-sub">Ver trajeto com trânsito</span>
+          </span>
+          <i class="fas fa-external-link-alt btn-rota-ext"></i>
+        </a>
+        <a class="btn-rota btn-waze" id="linkWaze" href="#" target="_blank" rel="noopener">
+          <i class="fab fa-waze"></i>
+          <span class="btn-rota-texto">
+            <span class="btn-rota-titulo">Abrir no Waze</span>
+            <span class="btn-rota-sub">Alertas e melhor rota</span>
+          </span>
+          <i class="fas fa-external-link-alt btn-rota-ext"></i>
+        </a>
+      </div>
+
+      <button class="btn-nova" id="btnNova"><i class="fas fa-arrow-left"></i> Nova corrida</button>
+    </div>
+  </main>
+
+  <footer class="rodape">
+    <p>&copy; 2026 Corrida Fácil</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      var app = CalcUberApp;
+      app.Auth.protecaoRota();
+
+      document.getElementById('topbarUser').textContent = app.Auth.getNome();
+
+      var form = document.getElementById('calcForm');
+      var origemInput = document.getElementById('origem');
+      var destinoInput = document.getElementById('destino');
+      var taxaInput = document.getElementById('taxaFixa');
+      var precoKmInput = document.getElementById('precoKm');
+      var erroMsg = document.getElementById('erroMsg');
+      var btnCalc = document.getElementById('btnCalcular');
+      var cardResult = document.getElementById('cardResultado');
+
+      var elRes = {
+        resOrigem: document.getElementById('resOrigem'),
+        resDestino: document.getElementById('resDestino'),
+        resDistancia: document.getElementById('resDistancia'),
+        resTempo: document.getElementById('resTempo'),
+        resTaxa: document.getElementById('resTaxa'),
+        resPrecoKm: document.getElementById('resPrecoKm'),
+        resSubtotal: document.getElementById('resSubtotal'),
+        resTotal: document.getElementById('resTotal'),
+        mapaIframe: document.getElementById('mapaIframe'),
+        linkGmaps: document.getElementById('linkGmaps'),
+        linkWaze: document.getElementById('linkWaze'),
+        form: form,
+        cardResultado: cardResult,
+        erroMsg: erroMsg
+      };
+
+      var btnText = btnCalc.querySelector('.btn-calcular-text');
+      var btnSpin = btnCalc.querySelector('.btn-calcular-spinner');
+
+      document.getElementById('btnNova').addEventListener('click', function () {
+        app.Ui.voltarFormulario(elRes);
+      });
+
+      document.getElementById('btnLogout').addEventListener('click', function () {
+        app.Auth.logout();
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        app.Ui.limparErro(erroMsg);
+
+        var origem = origemInput.value.trim();
+        var destino = destinoInput.value.trim();
+        var taxa = taxaInput.value.trim();
+        var precoKm = precoKmInput.value.trim();
+
+        if (!origem) { app.Ui.exibirErro(erroMsg, 'Informe a origem.'); origemInput.focus(); return; }
+        if (!destino) { app.Ui.exibirErro(erroMsg, 'Informe o destino.'); destinoInput.focus(); return; }
+        if (!taxa || isNaN(taxa) || Number(taxa) < 0) { app.Ui.exibirErro(erroMsg, 'Taxa fixa inválida.'); taxaInput.focus(); return; }
+        if (!precoKm || isNaN(precoKm) || Number(precoKm) < 0) { app.Ui.exibirErro(erroMsg, 'Preço por KM inválido.'); precoKmInput.focus(); return; }
+
+        app.Ui.setLoading(btnCalc, true, { textEl: btnText, spinnerEl: btnSpin });
+
+        app.Api.calcular(origem, destino, Number(taxa), Number(precoKm), function (erro, dados) {
+          app.Ui.setLoading(btnCalc, false, { textEl: btnText, spinnerEl: btnSpin });
+          if (erro) { app.Ui.exibirErro(erroMsg, erro.message); return; }
+          app.Ui.exibirResultado(dados, elRes);
+        });
+      });
+
+      destinoInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') form.dispatchEvent(new Event('submit'));
+      });
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      }
+    })();
+  </script>
+</body>
+</html>

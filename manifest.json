@@ -1,0 +1,18 @@
+{
+  "name": "Corrida Fácil",
+  "short_name": "CorridaFácil",
+  "description": "Calcule preços de corridas de transporte particular em segundos.",
+  "start_url": "/dashboard.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0a",
+  "theme_color": "#00d47e",
+  "scope": "/",
+  "categories": ["utilities", "transportation"],
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "prefer_related_applications": false
+}
