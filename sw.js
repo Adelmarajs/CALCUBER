@@ -1,18 +1,15 @@
-/**
- * Corrida Fácil — Service Worker
- * Cache-first para assets, network-first para navegação.
- */
-
-var CACHE = 'corrida-facil-v1';
+var CACHE = 'corrida-facil-v2';
 var ASSETS = [
-  '/', '/index.html', '/dashboard.html', '/app.js', '/style.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'
+  '/index.html', '/dashboard.html', '/app.js', '/style.css',
+  '/manifest.json', 'icons/icon-192x192.png', 'icons/icon-512x512.png'
 ];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (c) {
-      return c.addAll(ASSETS);
+      return Promise.allSettled(ASSETS.map(function (url) {
+        return c.add(url).catch(function () {});
+      }));
     }).then(function () { return self.skipWaiting(); })
   );
 });
