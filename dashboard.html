@@ -166,6 +166,30 @@
     </div>
   </main>
 
+  <!-- CONTRIBUIR -->
+  <div class="card-contribuir" id="cardContribuir">
+    <div class="contribuir-header">
+      <i class="fas fa-heart"></i>
+      <span>Ajude o projeto</span>
+    </div>
+    <p class="contribuir-desc">Se o app está te ajudando, considere fazer uma contribuição via PIX. Qualquer valor fortalece o projeto!</p>
+    <div class="contribuir-pix">
+      <div class="contribuir-qrcode">
+        <img src="https://pixqrcode.com/generate/?key=3cd92cc2-ab26-4408-8123-50a000e64b5f&amount=0&transaction=donation&description=Apoiar+Corrida+Facil" alt="QR Code PIX" class="pix-qr-img" />
+      </div>
+      <div class="contribuir-chave">
+        <span class="chave-label">Chave PIX (aleatória)</span>
+        <div class="chave-wrapper">
+          <code class="chave-texto" id="pixChave">3cd92cc2-ab26-4408-8123-50a000e64b5f</code>
+          <button class="btn-copiar" id="btnCopiarPix" title="Copiar chave">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <span class="chave-copiado" id="chaveCopiado" style="display:none;">Chave copiada!</span>
+      </div>
+    </div>
+  </div>
+
   <footer class="rodape">
     <p>&copy; 2026 Corrida Fácil</p>
   </footer>
@@ -241,6 +265,34 @@
       destinoInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') form.dispatchEvent(new Event('submit'));
       });
+
+      // === COPIAR PIX ===
+      document.getElementById('btnCopiarPix').addEventListener('click', function () {
+        var chave = document.getElementById('pixChave').textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(chave).then(function () {
+            mostrarCopiado();
+          }).catch(function () { fallbackCopiar(chave); });
+        } else {
+          fallbackCopiar(chave);
+        }
+      });
+
+      function mostrarCopiado() {
+        var el = document.getElementById('chaveCopiado');
+        el.style.display = 'inline';
+        setTimeout(function () { el.style.display = 'none'; }, 2000);
+      }
+
+      function fallbackCopiar(texto) {
+        var ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); mostrarCopiado(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
 
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(function () {});
