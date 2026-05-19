@@ -1,7 +1,8 @@
-var CACHE = 'corrida-facil-v2';
+var CACHE = 'corrida-facil-v3';
+var BASE = '/CALCUBER/';
 var ASSETS = [
-  'index.html', 'dashboard.html', 'app.js', 'style.css',
-  'manifest.json', 'icons/icon-192x192.png', 'icons/icon-512x512.png'
+  BASE + 'index.html', BASE + 'dashboard.html', BASE + 'app.js', BASE + 'style.css',
+  BASE + 'manifest.json', BASE + 'icons/icon-192x192.png', BASE + 'icons/icon-512x512.png'
 ];
 
 self.addEventListener('install', function (e) {
@@ -34,7 +35,7 @@ self.addEventListener('fetch', function (e) {
       fetch(e.request).then(function (r) {
         return caches.open(CACHE).then(function (c) { c.put(e.request, r.clone()); return r; });
       }).catch(function () {
-        return caches.match(e.request).then(function (r) { return r || caches.match('index.html'); });
+        return caches.match(e.request).then(function (r) { return r || caches.match(BASE + 'index.html'); });
       })
     );
     return;
